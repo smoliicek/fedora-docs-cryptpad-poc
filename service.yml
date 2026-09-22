@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cryptpad
+  namespace: communishift-draft-share
+spec:
+  selector:
+    app: cryptpad
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+    - name: websocket
+      port: 3003
+      targetPort: 3003

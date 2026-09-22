@@ -1,3 +1,5 @@
-FROM docker.io/etherpad/etherpad:latest
-RUN chgrp -R 0 /opt/etherpad-lite && \
-  chmod -R g=u /opt/etherpad-lite
+FROM docker.io/cryptpad/cryptpad:latest
+USER root
+RUN chgrp -R 0 /cryptpad && \
+  chmod -R g=u /cryptpad
+USER 4001

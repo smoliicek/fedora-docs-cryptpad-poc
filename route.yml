@@ -1,0 +1,32 @@
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: cryptpad-main
+  namespace: communishift-draft-share
+spec:
+  host: cryptpad-communishift-draft-share.apps.fedora.cj14.p1.openshiftapps.com
+  to:
+    kind: Service
+    name: cryptpad
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: cryptpad-sandbox
+  namespace: communishift-draft-share
+spec:
+  host: cryptpad-sandbox-communishift-draft-share.apps.fedora.cj14.p1.openshiftapps.com
+  to:
+    kind: Service
+    name: cryptpad
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

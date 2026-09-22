@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cryptpad
+  namespace: communishift-draft-share
+  labels:
+    app: cryptpad
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: cryptpad
+  template:
+    metadata:
+      labels:
+        app: cryptpad
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      schedulerName: default-scheduler
+      securityContext: {}
+      volumes:
+        - name: cryptpad-storage
+          persistentVolumeClaim:
+            claimName: cryptpad-storage
+        - name: cryptpad-config
+          configMap:
+            name: cryptpad-config
+      containers:
+        - name: cryptpad
+          image: docker.io/smoliicek/ocp-cryptpad-fedora:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+            - name: websocket
+              containerPort: 3003
+              protocol: TCP
+          env:
+            - name: CPAD_MAIN_DOMAIN
+              value: https://cryptpad-communishift-draft-share.apps.fedora.cj14.p1.openshiftapps.com
+            - name: CPAD_SANDBOX_DOMAIN
+              value: https://cryptpad-sandbox-communishift-draft-share.apps.fedora.cj14.p1.openshiftapps.com
+            - name: CPAD_CONF
+              value: /cryptpad/config/config.js
+            - name: NODE_ENV
+              value: production
+          resources:
+            requests:
+              cpu: 250m
+              memory: 1Gi
+            limits:
+              cpu: "1"
+              memory: 2Gi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 15
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 20
+            successThreshold: 1
+            failureThreshold: 3
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: cryptpad-storage
+              mountPath: /cryptpad/blob
+              subPath: blob
+            - name: cryptpad-storage
+              mountPath: /cryptpad/block
+              subPath: block
+            - name: cryptpad-storage
+              mountPath: /cryptpad/data
+              subPath: data
+            - name: cryptpad-storage
+              mountPath: /cryptpad/datastore
+              subPath: datastore
+            - name: cryptpad-config
+              mountPath: /cryptpad/config/config.js
+              subPath: config.js
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
