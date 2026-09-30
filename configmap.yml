@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -18,4 +19,34 @@ data:
         "[admin-poc@cryptpad-communishift-draft-share.apps.fedora.cj14.p1.openshiftapps.com/MxQshfwmY6Ag3MTv4Al+iACeEomGLy4x1iyybK+VqAk=]"
       ],
       installMethod: 'docker',
+    };
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sso-config
+  namespace: communishift-draft-share
+  labels:
+    app: cryptpad
+data:
+  sso.js: |
+    //const fs = require('node:fs');
+
+    module.exports = {
+      enabled: true,
+      enforced: false,
+      cpPassword: true,
+      forceCpPassword: true,
+      // List of SSO providers
+      list: [
+        {
+          name: 'Fedora',
+          type: 'oidc',
+          url: 'https://id.fedoraproject.org/openidc',
+          client_id: "cryptpad",
+          client_secret: "<clientsecret>",
+          username_scope: 'profile',
+          username_claim: 'preffered_username'
+        }
+      ]
     };
