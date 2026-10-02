@@ -42,9 +42,9 @@ data:
         {
           name: 'Fedora',
           type: 'oidc',
-          url: 'https://id.fedoraproject.org/openidc',
-          client_id: "cryptpad",
-          client_secret: "<clientsecret>",
+          url: 'https://id.stg.fedoraproject.org/openidc',
+          client_id: "cryptpad-communishift",
+          client_secret: process.env.SSO_CLIENT_SECRET,
           username_scope: 'profile',
           username_claim: 'preffered_username'
         }
