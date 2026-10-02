@@ -55,9 +55,9 @@ spec:
               value: /cryptpad/config/config.js
             - name: NODE_ENV
               value: production
-          envFom:
+          envFrom:
             - secretRef:
-              name: cryptpad-sso
+                name: cryptpad-sso
           resources:
             requests:
               cpu: 250m
